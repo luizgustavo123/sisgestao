@@ -1,0 +1,417 @@
+﻿<!--Desenvolvido por: LUIZ GUSTAVO VIEIRA DA SILVA-->
+<!--LinkedIn: https://www.linkedin.com/in/luiz-gustavo-dev-->
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="icon" type="imagem/png" href="https://i.ibb.co/Cwbt6V2/LOGO-2.png" />
+    <meta charset="utf-8" />
+    <title>Softenter</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui" />
+    <style>
+        #app {
+            background-color: lightblue;
+        }
+        .fieldset-border {
+            border: 2px groove #ddd !important;
+            border-radius: 20px;
+            padding: 0 1.4em 1.4em 1.4em !important;
+            margin: 0 0 1.5em 0 !important;
+            height: 200px;
+            -webkit-box-shadow: 0px 0px 0px 0px #000;
+            box-shadow: 0px 0px 0px 0px #000;
+        }
+
+            .fieldset-border .legend-border {
+                font-size: 1.2em !important;
+                text-align: left !important;
+                width: auto;
+                padding: 0 10px;
+                border-bottom: none;
+            }
+    </style>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="https://unpkg.com/axios@1.0.0/dist/axios.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/v-mask/dist/v-mask.min.js"></script>
+
+
+    <div id="app">
+        <v-app id="inspire">
+
+            <v-snackbar timeout="2000"
+                        centered
+                        elevation="24"
+                        vertical
+                        v-model="snackbar"
+                        :color="cor_aviso">
+                <v-icon left>{{ icon }}</v-icon>
+
+                {{ text_aviso }}
+
+            </v-snackbar>
+
+            <v-dialog persistent width="200" v-model="carregando">
+                <v-card color="primary"
+                        dark>
+                    <v-card-text>
+                        Carregando... Aguarde !
+                        <v-progress-linear indeterminate
+                                           color="white"
+                                           class="mb-0">
+                        </v-progress-linear>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+
+            <!--menu superior-->
+            <div>
+                <v-app-bar color="#5C6BC0"
+                           dark>
+                    <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+
+
+                    <v-toolbar-title>
+                        <h4>{{nome_empresa}}</h4>
+                    </v-toolbar-title>
+
+                    <v-spacer></v-spacer>
+
+                    <h5>usuário: {{funcionario.toUpperCase()}}</h5>
+                </v-app-bar>
+            </div>
+            <v-navigation-drawer v-model="drawer"
+                                 absolute
+                                 dark
+                                 color="indigo"
+                                 temporary>
+                <v-list nav
+                        dense>
+                    <v-list-item-group v-model="group"
+                                       active-class="deep-purple--text text--accent-4">
+                        <v-list-item onclick="window.location.href ='https://softenter.com.br/vendas.html'">
+                            <v-list-item-icon>
+                                <v-icon>mdi-cash-register</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Vendas</v-list-item-title>
+
+                        </v-list-item>
+
+                        <v-list-item onclick="window.location.href ='https://softenter.com.br/produtos.html'">
+                            <v-list-item-icon>
+                                <v-icon>mdi-package-variant-closed</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Produtos</v-list-item-title>
+                        </v-list-item>
+
+                        <v-list-item :disabled="disabled_sem_perm" onclick="window.location.href ='https://softenter.com.br/financeiro.html'">
+                            <v-list-item-icon>
+                                <v-icon>mdi-currency-usd</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Financeiro</v-list-item-title>
+                        </v-list-item>
+
+                        <v-list-item onclick="window.location.href ='https://softenter.com.br/clientes.html'">
+                            <v-list-item-icon>
+                                <v-icon>mdi-account-multiple</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Clientes</v-list-item-title>
+                        </v-list-item>
+
+                        <v-list-item :disabled="disabled_sem_perm" onclick="window.location.href ='https://softenter.com.br/funcionarios.html'">
+                            <v-list-item-icon>
+                                <v-icon>mdi-account-group</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Funcionários</v-list-item-title>
+                        </v-list-item>
+
+                        <v-list-item :disabled="disabled_sem_perm" onclick="window.location.href ='https://softenter.com.br/configuracoes.html'">
+                            <v-list-item-icon>
+                                <v-icon>mdi-cogs</v-icon>
+                            </v-list-item-icon>
+                            <v-list-item-title>Configurações</v-list-item-title>
+                        </v-list-item>
+                    </v-list-item-group>
+                </v-list>
+                <br><br><br><br><br><br><br><br><br><br>
+
+                <v-img onclick="window.location.href ='https://api.whatsapp.com/send?phone=+5516994153485&text=%0A'"
+                       height="95"
+                       max-width="190"
+                       src="https://i.ibb.co/nmQtpJJ/celular3.png">
+                </v-img>
+
+            </v-navigation-drawer>
+
+            <v-card color="grey lighten-3"elevation="0">
+
+                <br>
+                <v-row dense justify="center">
+                    <v-col cols="11" sm="10">
+                        <v-toolbar class="mb-2"
+                                   color="grey lighten-3"
+                                   dark
+                                   flat>
+                            <v-toolbar-title class="indigo--text text--darken-1"> <v-icon color="#3949AB">mdi-cogs</v-icon> Configurações</v-toolbar-title>
+                        </v-toolbar>
+                        </v-col>
+                            <v-col cols="11" sm="4">
+                                <fieldset class="fieldset-border">
+                                    <legend class="legend-border">Configuração de venda</legend>
+                                    <v-col cols="12" sm="12">
+                                        <v-checkbox v-model="check_control_est"
+                                                    label="Controlar estoque"></v-checkbox>
+                                    </v-col>
+                                    <v-col cols="12" sm="12">
+                                        <v-checkbox v-model="check_leitor"
+                                                    label="Utilizar leitor de código de barras"></v-checkbox>
+                                    </v-col>
+                                </fieldset>
+                            </v-col>
+                            <v-col cols="11" sm="4">
+                                <fieldset class="fieldset-border">
+                                    <legend class="legend-border">Impressão de recibos</legend>
+                                    <v-row dense justify="center">
+                                        <v-col cols="12" sm="12">
+                                            <v-checkbox v-model="check_termica"
+                                                        @click="form_imp_termica()"
+                                                        label="Impressora termica(58mm e 80mm)"></v-checkbox>
+                                        </v-col>
+                                        <v-col cols="12" sm="12">
+                                            <v-checkbox v-model="check_a4"
+                                                        @click="form_imp_a4()"
+                                                        label="Impressora comum(A4)"></v-checkbox>
+                                        </v-col>
+                                    </v-row>
+                                </fieldset>
+                            </v-col>
+</v-row>
+
+                <v-row dense justify="center">
+                    <v-col cols="11" sm="4">
+                        <v-text-field v-model="nome_empresa" label="Nome da Empresa" counter maxlength="29" outlined></v-text-field>
+                    </v-col>
+                    <v-col cols="11" sm="4">
+                        <v-text-field v-model="endereco" label="Endereço" counter maxlength="32" outlined></v-text-field>
+                    </v-col>
+
+                </v-row>
+                <v-row dense justify="center">
+                    <v-col cols="6" sm="2">
+                        <v-text-field v-model="telefone" label="Telefone" v-mask="'(##)#####-####'" outlined></v-text-field>
+                    </v-col>
+                    <v-col cols="5" sm="2">
+                        <v-text-field v-model="cnpj" label="CNPJ" outlined></v-text-field>
+                    </v-col>
+                    <v-col cols="8" sm="4">
+                        <br><p><b>{{ licenca }}</b></p>
+                    </v-col>
+                </v-row>
+
+                <v-row dense justify="center">
+                    <v-col cols="2" sm="1">
+                        <v-btn color="primary"
+                               x-large
+                               @click="salvar()">
+                            Salvar
+                        </v-btn>
+                    </v-col>
+                </v-row>
+                <br>
+            </v-card>
+
+        </v-app>
+    </div>
+
+    <script>
+        Vue.use(VueMask.VueMaskPlugin);
+        new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data: vm => ({
+                url: 'https://softenter.com.br',
+                show1: false,
+                usuario: '',
+                password: '',
+                dialog_login: true,
+                snackbar: false,
+                text_aviso: '',
+                cor_aviso: "success",
+                icon: 'mdi-check-circle',
+                nome_empresa: '',
+                endereco: '',
+                telefone: '',
+                cnpj: '',
+                licenca: '',
+                check_control_est: false,
+                check_leitor: false,
+                check_a4: false,
+                check_termica: false,
+                drawer: false,
+                group: null,
+
+            }),
+
+            watch: {
+
+            },
+
+            created() {
+                this.initialize()
+
+                this.info_empresa()
+
+                if (sessionStorage.login_ativo != 'true') {
+                    window.location.href = this.url + "/login.html";
+                }
+
+                if (sessionStorage.usuadm == '0') {
+                    this.disabled_sem_perm = true
+                }
+
+
+            },
+
+            methods: {
+
+                form_imp_termica() {
+                    if (this.check_a4 == true) {
+                        this.check_a4 = false
+                    }
+                },
+                form_imp_a4() {
+                    if (this.check_termica == true) {
+                        this.check_termica = false
+                    }
+                },
+
+
+                info_empresa() {
+                    this.nome_empresa = sessionStorage.nome_empresa
+                    this.funcionario = sessionStorage.usuario_nome
+                },
+
+                async initialize() {
+                    listar = await axios.get(this.url + '/api/empresa_config/listar/empresa_config?Id_empresa=' + sessionStorage.id_empresalogado)
+
+                    if (localStorage.control_est == "true") {
+                        this.check_control_est = true
+                    } else {
+                        this.check_control_est = false
+                    }
+
+                    if (localStorage.leitor_barras == "true") {
+                        this.check_leitor = true
+                    } else {
+                        this.check_leitor = false
+                    }
+
+                    if (localStorage.imp_a4 == "true") {
+                        this.check_a4 = true
+                    } else {
+                        this.check_a4 = false
+                    }
+
+                    if (localStorage.imp_termica == "true") {
+                        this.check_termica = true
+                    } else {
+                        this.check_termica = false
+                    }
+
+                    if (localStorage.imp_termica == "false" && localStorage.imp_a4 == "false") {
+                        this.check_a4 = true
+                    }
+
+
+
+                    this.nome_empresa = listar.data[0].nome
+                    this.endereco = listar.data[0].endereco
+                    this.telefone = listar.data[0].telefone
+                    this.cnpj = listar.data[0].cnpj
+
+
+
+                    this.licenca = 'Sua licença expira em: ' + listar.data[0].data_licenca.slice(0, 10)
+                },
+
+                async salvar() {
+                    try {
+                        this.carregando = true
+
+                        if (this.check_control_est == true) {
+                            localStorage.control_est = "true";
+                        } else {
+                            localStorage.control_est = "false";
+                        }
+
+                        if (this.check_leitor == true) {
+                            localStorage.leitor_barras = "true";
+                        } else {
+                            localStorage.leitor_barras = "false";
+                        }
+
+                        if (this.check_a4 == true) {
+                            localStorage.imp_a4 = "true";
+                        } else {
+                            localStorage.imp_a4 = "false";
+                        }
+
+                        if (this.check_termica == true) {
+                            localStorage.imp_termica = "true";
+                        } else {
+                            localStorage.imp_termica = "false";
+                        }
+
+                        if (localStorage.imp_termica == "false" && localStorage.imp_a4 == "false") {
+                            localStorage.imp_a4 = "true";
+                        }
+
+                        await axios.post(this.url + '/api/empresa_config/empresa_config/alterar?Nome=' + this.nome_empresa + '&Endereco=' + this.endereco + '&Telefone=' + this.telefone + '&Cnpj=' + this.cnpj + '&Nome_link=' /*+ this.nome_link*/ + '&taxa_entrega=null&Id=' + sessionStorage.id_empresalogado)
+
+                        this.carregando = false
+
+                        this.snackbar = true
+                        this.text_aviso = 'Salvo com sucesso !'
+                        this.cor_aviso = "success"
+                        this.icon = "mdi-mdi-check-circle"
+
+                        setTimeout(function () {
+                            window.location.href = "https://softenter.com.br/login.html";
+                        }, 2000);
+                    }
+                    catch (err) {
+                        alert("Erro: " + err.message);
+                        this.carregando = false
+                    }
+                },
+
+
+
+                /*   async login() {
+                      listar = await axios.get(this.url + '/api/funcionarios/listar/funcionarios_usu?Usuario=' + this.usuario + '&Senha=' + this.password)
+
+                      if (listar.data.length > 0) {
+                          sessionStorage.login_ativo = true
+                          sessionStorage.id_usulogado = listar.data[0].id
+                          sessionStorage.id_empresalogado = listar.data[0].fk_empresa
+                          sessionStorage.usuadm = listar.data[0].usu_adm
+                          this.dialog_login = false
+                      } else {
+                          this.snackbar = true,
+                              this.text_aviso = 'Usuário ou senha incorreto !'
+                          this.cor_aviso = "red"
+                          this.icon = "mdi-alert-circle-outline"
+                      }
+                  }, */
+            }
+
+        })
+    </script>
+
+</body>
+</html>
