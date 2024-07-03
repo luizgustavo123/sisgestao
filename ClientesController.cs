@@ -11,7 +11,7 @@ namespace exemplo.Controllers
     [RoutePrefix("api/clientes")]
     public class ClientesController : ApiController
     {
-        private string ConnectionString = "Data Source=den1.mssql8.gear.host;User Id=softenterdb;Password=gustavo456@;Initial Catalog=softenterdb";
+        private string ConnectionString = "Data Source=den1.mssql8.gear.host;User Id=softenterdb;Password=;Initial Catalog=softenterdb";
         private string Where;
 
         [HttpGet]
